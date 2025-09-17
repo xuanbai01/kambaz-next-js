@@ -265,7 +265,7 @@ export default function Lab1() {
             to get dummy text<br />
 
             Please 
-            <a href="https://github.com/" id="wd-github"> click</a>
+            <a href="https://github.com/xuanbai01/kambaz-next-js.git" id="wd-github"> click</a>
             to get to my github repo<br />
 
 
