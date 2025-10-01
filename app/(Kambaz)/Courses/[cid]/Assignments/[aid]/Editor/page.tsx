@@ -1,7 +1,7 @@
-import Editor from "./editor";
+import AssignmentEditor from "./editor";
 
 export default function Page({
   params,
 }: { params: { cid: string; aid: string } }) {
-  return <Editor />;
+  return <AssignmentEditor />;
 }
