@@ -1,4 +1,3 @@
-import Link from "next/link";
 import TOC from "./TOC";
 export default function Labs() {
  return (

@@ -8,22 +8,11 @@ import * as db from "../../../../../Database";
 export default function AssignmentEditor() {
   const { cid, aid } = useParams();
   const assignments = db.assignments;
-  const assignment = assignments.find((a: any) => a._id === aid);
+  const assignment = assignments.find((a) => a._id === aid);
 
   if (!assignment) {
     return <div>Assignment not found</div>;
   }
-
-  // Convert date strings to YYYY-MM-DD format for date inputs
-  const formatDateForInput = (dateString: string) => {
-    // If date is already in YYYY-MM-DD format, return as is
-    if (/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
-      return dateString;
-    }
-    // Otherwise, try to parse and format (this is a simple example)
-    // You may need more sophisticated date parsing based on your data format
-    return dateString;
-  };
 
   return (
     <div id="wd-assignments-editor" className="p-3">
