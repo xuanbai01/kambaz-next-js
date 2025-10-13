@@ -1,8 +1,30 @@
 "use client";
 
 import { Form, Button, Row, Col } from "react-bootstrap";
+import { useParams } from "next/navigation";
+import Link from "next/link";
+import * as db from "../../../../../Database";
 
 export default function AssignmentEditor() {
+  const { cid, aid } = useParams();
+  const assignments = db.assignments;
+  const assignment = assignments.find((a: any) => a._id === aid);
+
+  if (!assignment) {
+    return <div>Assignment not found</div>;
+  }
+
+  // Convert date strings to YYYY-MM-DD format for date inputs
+  const formatDateForInput = (dateString: string) => {
+    // If date is already in YYYY-MM-DD format, return as is
+    if (/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
+      return dateString;
+    }
+    // Otherwise, try to parse and format (this is a simple example)
+    // You may need more sophisticated date parsing based on your data format
+    return dateString;
+  };
+
   return (
     <div id="wd-assignments-editor" className="p-3">
       <Form>
@@ -11,7 +33,7 @@ export default function AssignmentEditor() {
           <Form.Control 
             type="text" 
             id="wd-name" 
-            defaultValue="A1 - ENV + HTML" 
+            defaultValue={assignment.title} 
           />
         </Form.Group>
 
@@ -20,7 +42,7 @@ export default function AssignmentEditor() {
             as="textarea"
             id="wd-description"
             rows={10}
-            defaultValue="The assignment is available online Submit a link to the landing page of your Web application running on Netlify. The landing page should include the following: Your full name and section Links to each of the lab assignments Link to the Kanbas application Links to all relevant source code repositories The Kanbas application should include a link to navigate back to the landing page."
+            defaultValue={assignment.description}
           />
         </Form.Group>
 
@@ -32,7 +54,7 @@ export default function AssignmentEditor() {
             <Form.Control 
               type="number" 
               id="wd-points" 
-              defaultValue={100} 
+              defaultValue={assignment.points} 
             />
           </Col>
         </Row>
@@ -131,7 +153,7 @@ export default function AssignmentEditor() {
               <Form.Control
                 type="date"
                 id="wd-due-date"
-                defaultValue="2024-05-13"
+                defaultValue={assignment.dueDate || "2024-05-13"}
                 className="mb-3"
               />
 
@@ -143,7 +165,7 @@ export default function AssignmentEditor() {
                   <Form.Control
                     type="date"
                     id="wd-available-from"
-                    defaultValue="2024-05-06"
+                    defaultValue={assignment.availableFromDate || "2024-05-06"}
                   />
                 </Col>
                 <Col>
@@ -153,7 +175,7 @@ export default function AssignmentEditor() {
                   <Form.Control
                     type="date"
                     id="wd-available-until"
-                    defaultValue="2024-05-20"
+                    defaultValue={assignment.availableUntilDate || "2024-05-20"}
                   />
                 </Col>
               </Row>
@@ -164,12 +186,16 @@ export default function AssignmentEditor() {
         <hr />
 
         <div className="d-flex justify-content-end gap-2">
-          <Button variant="secondary" size="lg">
-            Cancel
-          </Button>
-          <Button variant="danger" size="lg">
-            Save
-          </Button>
+          <Link href={`/Courses/${cid}/Assignments`}>
+            <Button variant="secondary" size="lg">
+              Cancel
+            </Button>
+          </Link>
+          <Link href={`/Courses/${cid}/Assignments`}>
+            <Button variant="danger" size="lg">
+              Save
+            </Button>
+          </Link>
         </div>
       </Form>
     </div>

@@ -1,3 +1,4 @@
+"use client";
 import { ListGroup, ListGroupItem } from "react-bootstrap";
 import { BsGripVertical } from "react-icons/bs";
 import { MdOutlineAssignment } from "react-icons/md";
@@ -5,8 +6,13 @@ import AssignmentsControls from "./AssignmentsControls";
 import AssignmentControlButtons from "./AssignmentControlButtons";
 import LessonControlButtons from "./LessonControlButtons";
 import Link from "next/link";
+import { useParams } from "next/navigation";
+import * as db from "../../../Database";
 
 export default function Assignments() {
+  const { cid } = useParams();
+  const assignments = db.assignments;
+
   return (
     <div id="wd-assignments">
       <AssignmentsControls />
@@ -20,67 +26,37 @@ export default function Assignments() {
               <span className="border border-dark rounded-pill px-2 py-1 me-2">
                 40% of Total
               </span>
-              <AssignmentControlButtons/>
+              <AssignmentControlButtons />
             </div>
           </div>
 
           <ListGroup className="rounded-0">
-            <ListGroupItem className="wd-assignment-list-item p-3 ps-1 d-flex align-items-start">
-              <BsGripVertical className="me-2 fs-3 mt-1" />
-              <MdOutlineAssignment className="me-3 fs-3 text-success mt-1" />
-              <div className="flex-grow-1">
-                <Link
-                  href="/Courses/1234/Assignments/A1/Editor" 
-                  className="wd-assignment-link text-dark text-decoration-none fw-bold"
+            {assignments
+              .filter((assignment: any) => assignment.course === cid)
+              .map((assignment: any) => (
+                <ListGroupItem
+                  key={assignment._id}
+                  className="wd-assignment-list-item p-3 ps-1 d-flex align-items-start"
                 >
-                  A1
-                </Link>
-                <div className="text-muted small">
-                  <span className="text-danger">Multiple Modules</span> | Not available until May 6 at 12:00am |
-                  <br />
-                  Due May 13 at 11:59pm | 100 pts
-                </div>
-              </div>
-              <LessonControlButtons />
-            </ListGroupItem>
-
-            <ListGroupItem className="wd-assignment-list-item p-3 ps-1 d-flex align-items-start">
-              <BsGripVertical className="me-2 fs-3 mt-1" />
-              <MdOutlineAssignment className="me-3 fs-3 text-success mt-1" />
-              <div className="flex-grow-1">
-                <Link
-                  href="/Courses/1234/Assignments/A2/Editor"
-                  className="wd-assignment-link text-dark text-decoration-none fw-bold"
-                >
-                  A2
-                </Link>
-                <div className="text-muted small">
-                  <span className="text-danger">Multiple Modules</span> | Not available until May 13 at 12:00am |
-                  <br />
-                  Due May 20 at 11:59pm | 100 pts
-                </div>
-              </div>
-              <LessonControlButtons />
-            </ListGroupItem>
-
-            <ListGroupItem className="wd-assignment-list-item p-3 ps-1 d-flex align-items-start">
-              <BsGripVertical className="me-2 fs-3 mt-1" />
-              <MdOutlineAssignment className="me-3 fs-3 text-success mt-1" />
-              <div className="flex-grow-1">
-                <Link
-                  href="/Courses/1234/Assignments/A3/Editor"
-                  className="wd-assignment-link text-dark text-decoration-none fw-bold"
-                >
-                  A3
-                </Link>
-                <div className="text-muted small">
-                  <span className="text-danger">Multiple Modules</span> | Not available until May 20 at 12:00am |
-                  <br />
-                  Due May 27 at 11:59pm | 100 pts
-                </div>
-              </div>
-              <LessonControlButtons />
-            </ListGroupItem>
+                  <BsGripVertical className="me-2 fs-3 mt-1" />
+                  <MdOutlineAssignment className="me-3 fs-3 text-success mt-1" />
+                  <div className="flex-grow-1">
+                    <Link
+                      href={`/Courses/${cid}/Assignments/${assignment._id}/Editor`}
+                      className="wd-assignment-link text-dark text-decoration-none fw-bold"
+                    >
+                      {assignment.title}
+                    </Link>
+                    <div className="text-muted small">
+                      <span className="text-danger">Multiple Modules</span> |{" "}
+                      {assignment.availableFrom && `Not available until ${assignment.availableFrom} |`}
+                      <br />
+                      Due {assignment.due} | {assignment.points} pts
+                    </div>
+                  </div>
+                  <LessonControlButtons />
+                </ListGroupItem>
+              ))}
           </ListGroup>
         </ListGroupItem>
       </ListGroup>
