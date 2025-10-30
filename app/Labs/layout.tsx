@@ -3,7 +3,7 @@
 import { ReactNode } from "react";
 import TOC from "./TOC";
 import { Provider } from "react-redux";
-import store from "@/app/(Kambaz)/store";
+import store from "@/app/Labs/Lab4/store";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 export default function LabsLayout({
