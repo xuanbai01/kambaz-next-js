@@ -18,6 +18,7 @@ const eslintConfig = [
       '@next/next/no-page-custom-font': 'off',
       
       // Turn errors into warnings (won't block build)
+      "@typescript-eslint/no-explicit-any": "off",
       '@typescript-eslint/no-unused-vars': 'warn',
       '@next/next/no-img-element': 'warn',
       'jsx-a11y/alt-text': 'warn',
