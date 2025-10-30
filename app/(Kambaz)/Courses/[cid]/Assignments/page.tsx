@@ -4,18 +4,22 @@ import { BsGripVertical } from "react-icons/bs";
 import { MdOutlineAssignment } from "react-icons/md";
 import AssignmentsControls from "./AssignmentsControls";
 import AssignmentControlButtons from "./AssignmentControlButtons";
-import LessonControlButtons from "./LessonControlButtons";
 import Link from "next/link";
-import { useParams } from "next/navigation";
-import * as db from "../../../Database";
+import { useParams, useRouter } from "next/navigation";
+import { useSelector } from "react-redux";
 
 export default function Assignments() {
   const { cid } = useParams();
-  const assignments = db.assignments;
+  const router = useRouter();
+  const { assignments } = useSelector((s: any) => s.assignmentsReducer);
+
+  const onAdd = () => {
+    router.push(`/Courses/${cid}/Assignments/new/Editor`);
+  };
 
   return (
     <div id="wd-assignments">
-      <AssignmentsControls />
+      <AssignmentsControls onAdd={onAdd} />
 
       <ListGroup className="rounded-0" id="wd-assignment-list">
         <ListGroupItem className="p-0 mb-5 fs-5 border-gray">
@@ -32,29 +36,30 @@ export default function Assignments() {
 
           <ListGroup className="rounded-0">
             {assignments
-              .filter((assignment) => assignment.course === cid)
-              .map((assignment) => (
+              .filter((a: any) => String(a.course) === String(cid))
+              .map((a: any) => (
                 <ListGroupItem
-                  key={assignment._id}
+                  key={a._id}
                   className="wd-assignment-list-item p-3 ps-1 d-flex align-items-start"
                 >
                   <BsGripVertical className="me-2 fs-3 mt-1" />
                   <MdOutlineAssignment className="me-3 fs-3 text-success mt-1" />
                   <div className="flex-grow-1">
                     <Link
-                      href={`/Courses/${cid}/Assignments/${assignment._id}/Editor`}
+                      href={`/Courses/${cid}/Assignments/${a._id}/Editor`}
                       className="wd-assignment-link text-dark text-decoration-none fw-bold"
                     >
-                      {assignment.title}
+                      {a.title}
                     </Link>
                     <div className="text-muted small">
                       <span className="text-danger">Multiple Modules</span> |{" "}
-                      {assignment.availableFrom && `Not available until ${assignment.availableFrom} |`}
+                      {a.availableFrom && `Not available until ${a.availableFrom} |`}
                       <br />
-                      Due {assignment.due} | {assignment.points} pts
+                      Due {a.due} | {a.points} pts
                     </div>
                   </div>
-                  <LessonControlButtons />
+
+                  <AssignmentControlButtons assignmentId={a._id} />
                 </ListGroupItem>
               ))}
           </ListGroup>

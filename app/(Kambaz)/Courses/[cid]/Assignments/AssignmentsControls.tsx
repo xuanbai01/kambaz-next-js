@@ -4,18 +4,18 @@ import { Button, Form, InputGroup } from "react-bootstrap";
 import { FaPlus } from "react-icons/fa6";
 import { FaSearch } from "react-icons/fa";
 
-export default function AssignmentsControls() {
+export default function AssignmentsControls({
+  onAdd,
+}: {
+  onAdd: () => void;
+}) {
   return (
     <div id="wd-assignments-controls" className="d-flex justify-content-between align-items-center mb-4">
       <InputGroup style={{ width: "300px" }}>
         <InputGroup.Text className="bg-white">
           <FaSearch />
         </InputGroup.Text>
-        <Form.Control
-          type="text"
-          placeholder="Search for Assignment"
-          id="wd-search-assignment"
-        />
+        <Form.Control type="text" placeholder="Search for Assignment" id="wd-search-assignment" />
       </InputGroup>
 
       <div>
@@ -23,7 +23,7 @@ export default function AssignmentsControls() {
           <FaPlus className="me-2" />
           Group
         </Button>
-        <Button variant="danger" size="lg" id="wd-add-assignment-btn">
+        <Button variant="danger" size="lg" id="wd-add-assignment-btn" onClick={onAdd}>
           <FaPlus className="me-2" />
           Assignment
         </Button>
