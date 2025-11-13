@@ -1,18 +1,18 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { assignments as seed } from "../../../Database";
-import { v4 as uuidv4 } from "uuid";
 
 const initialState = {
-  assignments: seed,
+  assignments: [] as any[], // empty, we will fetch from server
 };
 
 const assignmentsSlice = createSlice({
   name: "assignments",
   initialState,
   reducers: {
+    setAssignments: (state, { payload }) => {
+      state.assignments = payload;
+    },
     addAssignment: (state, { payload: a }) => {
-      const doc: any = { _id: uuidv4(), ...a };
-      state.assignments = [...state.assignments, doc] as any;
+      state.assignments = [...state.assignments, a] as any;
     },
     updateAssignment: (state, { payload: a }) => {
       state.assignments = state.assignments.map((x: any) =>
@@ -25,6 +25,6 @@ const assignmentsSlice = createSlice({
   },
 });
 
-export const { addAssignment, updateAssignment, deleteAssignment } =
+export const { setAssignments, addAssignment, updateAssignment, deleteAssignment } =
   assignmentsSlice.actions;
 export default assignmentsSlice.reducer;

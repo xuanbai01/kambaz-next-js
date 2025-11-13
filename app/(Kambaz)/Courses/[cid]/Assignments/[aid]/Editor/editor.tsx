@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { useSelector, useDispatch } from "react-redux";
 import { addAssignment, updateAssignment } from "../../reducer";
+import * as client from "../../../../client";
 
 export default function AssignmentEditor() {
   const { cid, aid } = useParams();
@@ -15,40 +16,26 @@ export default function AssignmentEditor() {
   const existing = assignments.find((a: any) => a._id === aid);
   const isNew = aid === "new";
 
-  // Local scratch (uncontrolled -> read on submit is fine per chapter style)
-  const onSave = () => {
+  const onSave = async () => {
     const title = (document.getElementById("wd-name") as HTMLInputElement)?.value || "";
     const description = (document.getElementById("wd-description") as HTMLTextAreaElement)?.value || "";
     const points = Number((document.getElementById("wd-points") as HTMLInputElement)?.value || 0);
-    const dueDate = (document.getElementById("wd-due-date") as HTMLInputElement)?.value;
-    const availableFromDate = (document.getElementById("wd-available-from") as HTMLInputElement)?.value;
-    const availableUntilDate = (document.getElementById("wd-available-until") as HTMLInputElement)?.value;
+    const due = (document.getElementById("wd-due-date") as HTMLInputElement)?.value || null;
+    const availableFrom = (document.getElementById("wd-available-from") as HTMLInputElement)?.value || null;
+    const availableUntil = (document.getElementById("wd-available-until") as HTMLInputElement)?.value || null;
 
     if (isNew) {
-      dispatch(
-        addAssignment({
-          title,
-          description,
-          points,
-          course: cid,
-          due: dueDate,
-          availableFrom: availableFromDate,
-          availableUntil: availableUntilDate,
-        })
-      );
+      const created = await client.createAssignmentForCourse(String(cid), {
+        title, description, points, due, availableFrom, availableUntil,
+      });
+      dispatch(addAssignment(created));
     } else if (existing) {
-      dispatch(
-        updateAssignment({
-          ...existing,
-          title,
-          description,
-          points,
-          due: dueDate,
-          availableFrom: availableFromDate,
-          availableUntil: availableUntilDate,
-        })
-      );
+      const updated = await client.updateAssignment({
+        ...existing, title, description, points, due, availableFrom, availableUntil,
+      });
+      dispatch(updateAssignment(updated));
     }
+
     router.push(`/Courses/${cid}/Assignments`);
   };
 
@@ -71,29 +58,26 @@ export default function AssignmentEditor() {
             Points
           </Form.Label>
           <Col sm={9}>
-            <Form.Control type="number" id="wd-points" defaultValue={existing?.points ?? 0} />
+            <Form.Control type="number" id="wd-points" defaultValue={existing?.points ?? 100} />
           </Col>
         </Row>
 
-        {/* keep the rest of your UI identical, just ensure ids match the reads above */}
         <Row className="mb-3">
-          <Form.Label column sm={3} className="text-end">
-            Assign
-          </Form.Label>
+          <Form.Label column sm={3} className="text-end">Assign</Form.Label>
           <Col sm={9}>
             <div className="border p-3">
               <Form.Label className="fw-bold">Assign to</Form.Label>
               <Form.Control type="text" id="wd-assign-to" defaultValue="Everyone" className="mb-3" />
               <Form.Label htmlFor="wd-due-date" className="fw-bold">Due</Form.Label>
-              <Form.Control type="date" id="wd-due-date" defaultValue={existing?.due || "2024-05-13"} className="mb-3" />
+              <Form.Control type="date" id="wd-due-date" defaultValue={existing?.due || ""} className="mb-3" />
               <Row>
                 <Col>
                   <Form.Label htmlFor="wd-available-from" className="fw-bold">Available from</Form.Label>
-                  <Form.Control type="date" id="wd-available-from" defaultValue={existing?.availableFrom || "2024-05-06"} />
+                  <Form.Control type="date" id="wd-available-from" defaultValue={existing?.availableFrom || ""} />
                 </Col>
                 <Col>
                   <Form.Label htmlFor="wd-available-until" className="fw-bold">Until</Form.Label>
-                  <Form.Control type="date" id="wd-available-until" defaultValue={existing?.availableUntil || "2024-05-20"} />
+                  <Form.Control type="date" id="wd-available-until" defaultValue={existing?.availableUntil || ""} />
                 </Col>
               </Row>
             </div>

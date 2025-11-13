@@ -1,4 +1,5 @@
 "use client";
+import { useEffect } from "react";
 import { ListGroup, ListGroupItem } from "react-bootstrap";
 import { BsGripVertical } from "react-icons/bs";
 import { MdOutlineAssignment } from "react-icons/md";
@@ -6,15 +7,32 @@ import AssignmentsControls from "./AssignmentsControls";
 import AssignmentControlButtons from "./AssignmentControlButtons";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { setAssignments, deleteAssignment as deleteAssignmentAction } from "./reducer";
+import * as client from "../../client"; 
 
 export default function Assignments() {
   const { cid } = useParams();
   const router = useRouter();
+  const dispatch = useDispatch();
   const { assignments } = useSelector((s: any) => s.assignmentsReducer);
 
   const onAdd = () => {
     router.push(`/Courses/${cid}/Assignments/new/Editor`);
+  };
+
+  useEffect(() => {
+    const load = async () => {
+      if (!cid) return;
+      const list = await client.findAssignmentsForCourse(cid as string);
+      dispatch(setAssignments(list));
+    };
+    load();
+  }, [cid, dispatch]);
+
+  const onDelete = async (assignmentId: string) => {
+    await client.deleteAssignment(assignmentId);
+    dispatch(deleteAssignmentAction(assignmentId));
   };
 
   return (
@@ -58,8 +76,6 @@ export default function Assignments() {
                       Due {a.due} | {a.points} pts
                     </div>
                   </div>
-
-                  <AssignmentControlButtons assignmentId={a._id} />
                 </ListGroupItem>
               ))}
           </ListGroup>
