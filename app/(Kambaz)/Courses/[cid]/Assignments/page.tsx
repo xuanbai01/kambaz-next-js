@@ -8,8 +8,11 @@ import AssignmentControlButtons from "./AssignmentControlButtons";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useSelector, useDispatch } from "react-redux";
-import { setAssignments, deleteAssignment as deleteAssignmentAction } from "./reducer";
-import * as client from "../../client"; 
+import {
+  setAssignments,
+  deleteAssignment as deleteAssignmentAction,
+} from "./reducer";
+import * as client from "../../client";
 
 export default function Assignments() {
   const { cid } = useParams();
@@ -62,6 +65,7 @@ export default function Assignments() {
                 >
                   <BsGripVertical className="me-2 fs-3 mt-1" />
                   <MdOutlineAssignment className="me-3 fs-3 text-success mt-1" />
+
                   <div className="flex-grow-1">
                     <Link
                       href={`/Courses/${cid}/Assignments/${a._id}/Editor`}
@@ -71,11 +75,23 @@ export default function Assignments() {
                     </Link>
                     <div className="text-muted small">
                       <span className="text-danger">Multiple Modules</span> |{" "}
-                      {a.availableFrom && `Not available until ${a.availableFrom} |`}
+                      {a.availableFrom &&
+                        `Not available until ${a.availableFrom} |`}
                       <br />
                       Due {a.due} | {a.points} pts
                     </div>
                   </div>
+
+                  <button
+                    className="btn btn-sm btn-outline-danger ms-2"
+                    onClick={async (e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      await onDelete(a._id);
+                    }}
+                  >
+                    Delete
+                  </button>
                 </ListGroupItem>
               ))}
           </ListGroup>

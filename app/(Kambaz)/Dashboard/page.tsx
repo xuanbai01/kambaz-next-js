@@ -23,14 +23,15 @@ import {
 
 export default function Dashboard() {
   const dispatch = useDispatch();
-  const { courses } = useSelector((state: any) => state.coursesReducer); // my courses
+  const { courses = [] } = useSelector((state: any) => state.coursesReducer);
   const { currentUser } = useSelector((state: any) => state.accountReducer);
-  const { enrollments } = useSelector((s: any) => s.enrollmentsReducer);
+  const { enrollments = [] } = useSelector(
+    (s: any) => s.enrollmentsReducer || {}
+  );
 
-  const [allCourses, setAllCourses] = useState<any[]>([]); // catalog
+  const [allCourses, setAllCourses] = useState<any[]>([]);
   const [showAll, setShowAll] = useState(false);
   const [course, setCourse] = useState<any>({
-    _id: "0",
     name: "New Course",
     number: "New Number",
     startDate: "2023-09-10",
@@ -39,39 +40,44 @@ export default function Dashboard() {
     description: "New Description",
   });
 
-  // ---------- helpers (define BEFORE useEffect) ----------
 
   const loadAllCourses = async () => {
     const list = await client.findAllCourses();
-    setAllCourses(list);
+    setAllCourses(Array.isArray(list) ? list : []);
   };
 
   const loadMyCourses = async () => {
     if (!currentUser) return;
     const mine = await client.findMyCourses();
-    dispatch(setCourses(mine));
+    dispatch(setCourses(Array.isArray(mine) ? mine : []));
   };
 
   const loadMyEnrollments = async () => {
     if (!currentUser) return;
     const rows = await client.getMyEnrollments();
-    dispatch(setEnrollments(rows));
+    dispatch(setEnrollments(Array.isArray(rows) ? rows : []));
   };
 
   const myEnrollments = useMemo(
-    () => enrollments.filter((e: any) => e.user === currentUser?._id),
+    () =>
+      Array.isArray(enrollments) && currentUser
+        ? enrollments.filter((e: any) => e.user === currentUser._id)
+        : [],
     [enrollments, currentUser]
   );
+
   const isEnrolled = (cid: string) =>
     myEnrollments.some((e: any) => e.course === cid);
 
-  const visibleCourses = showAll ? allCourses : courses;
+  const visibleCourses: any[] = Array.isArray(showAll ? allCourses : courses)
+    ? (showAll ? allCourses : courses)
+    : [];
 
   const onAddNewCourse = async () => {
-    const newCourse = await client.createCourse(course);
+    const { _id, ...courseData } = course;
+    const newCourse = await client.createCourse(courseData);
     setAllCourses((prev) => [...prev, newCourse]);
-    // optionally: await loadMyCourses();
-  };
+};
 
   const onDeleteCourse = async (courseId: string) => {
     await client.deleteCourse(courseId);
@@ -90,7 +96,7 @@ export default function Dashboard() {
   };
 
   const onEnroll = async (courseId: string) => {
-    const row = await client.enrollInCourse(courseId);
+    const row = await client.enrollIntoCourse(currentUser._id, courseId);
     if (row && row._id) {
       dispatch(addEnrollment(row));
       await loadMyCourses();
@@ -98,13 +104,11 @@ export default function Dashboard() {
   };
 
   const onUnenroll = async (courseId: string) => {
-    await client.unenrollFromCourse(courseId);
+    await client.unenrollFromCourse(currentUser._id, courseId);
     if (!currentUser) return;
     dispatch(removeEnrollment({ user: currentUser._id, course: courseId }));
     await loadMyCourses();
   };
-
-  // ---------- effects ----------
 
   useEffect(() => {
     loadAllCourses();
@@ -113,13 +117,11 @@ export default function Dashboard() {
   useEffect(() => {
     loadMyCourses();
     loadMyEnrollments();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentUser]);
 
   if (!currentUser)
     return <div id="wd-dashboard">Please sign in to view your courses.</div>;
 
-  // ---------- render ----------
 
   return (
     <div id="wd-dashboard" className="p-4">
@@ -174,8 +176,8 @@ export default function Dashboard() {
 
       <h2 id="wd-dashboard-published">
         {showAll
-          ? `All Courses (${allCourses.length})`
-          : `Enrolled Courses (${courses.length})`}
+          ? `All Courses (${visibleCourses.length})`
+          : `Enrolled Courses (${visibleCourses.length})`}
       </h2>
       <hr />
 
@@ -264,3 +266,4 @@ export default function Dashboard() {
     </div>
   );
 }
+
