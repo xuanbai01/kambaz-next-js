@@ -69,9 +69,14 @@ export default function Dashboard() {
   const isEnrolled = (cid: string) =>
     myEnrollments.some((e: any) => e.course === cid);
 
-  const visibleCourses: any[] = Array.isArray(showAll ? allCourses : courses)
-    ? (showAll ? allCourses : courses)
-    : [];
+  const enrolledCourses = useMemo(() => {
+    if (!Array.isArray(allCourses)) return [];
+    if (!Array.isArray(myEnrollments)) return [];
+    const enrolledIds = new Set(myEnrollments.map((e: any) => e.course));
+    return allCourses.filter((c: any) => enrolledIds.has(c._id));
+  }, [allCourses, myEnrollments]);
+
+  const visibleCourses: any[] = showAll ? allCourses : enrolledCourses;
 
   const onAddNewCourse = async () => {
     const { _id, ...courseData } = course;
