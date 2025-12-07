@@ -1,0 +1,207 @@
+[
+  {
+    "course": "CS4550",
+    "title": "HTML & CSS Basics Quiz",
+    "description": "Covers basic structure of HTML documents, common tags, and CSS selectors.",
+    "points": 20,
+    "published": true,
+    "multipleAttempts": true,
+    "maxAttempts": 3,
+    "questions": [
+      {
+        "title": "What does HTML stand for?",
+        "type": "MULTIPLE_CHOICE",
+        "points": 4,
+        "choices": [
+          "Hyperlinks and Text Markup Language",
+          "Hyper Text Markup Language",
+          "Home Tool Markup Language",
+          "Hyper Transfer Markup Language"
+        ],
+        "correctChoice": 1
+      },
+      {
+        "title": "Which HTML tag is used to define the largest heading?",
+        "type": "MULTIPLE_CHOICE",
+        "points": 4,
+        "choices": [
+          "<heading>",
+          "<h6>",
+          "<h1>",
+          "<head>"
+        ],
+        "correctChoice": 2
+      },
+      {
+        "title": "CSS stands for Cascading Style Sheets.",
+        "type": "TRUE_FALSE",
+        "points": 4,
+        "choices": [
+          "False",
+          "True"
+        ],
+        "correctChoice": 1
+      },
+      {
+        "title": "Which CSS property is used to change the text color?",
+        "type": "MULTIPLE_CHOICE",
+        "points": 4,
+        "choices": [
+          "font-style",
+          "text-color",
+          "font-color",
+          "color"
+        ],
+        "correctChoice": 3
+      },
+      {
+        "title": "In CSS, the selector used to target an element with id 'nav' is ______.",
+        "type": "FILL_IN_BLANK",
+        "points": 4,
+        "correctAnswers": [
+          "#nav"
+        ]
+      }
+    ]
+  },
+  {
+    "course": "CS4550",
+    "title": "JavaScript Fundamentals Quiz",
+    "description": "Variables, data types, conditionals, and basic functions in JavaScript.",
+    "points": 25,
+    "published": true,
+    "multipleAttempts": true,
+    "maxAttempts": 2,
+    "questions": [
+      {
+        "title": "Which keyword is used to declare a block-scoped variable?",
+        "type": "MULTIPLE_CHOICE",
+        "points": 5,
+        "choices": [
+          "var",
+          "let",
+          "const",
+          "static"
+        ],
+        "correctChoice": 1
+      },
+      {
+        "title": "Which of the following is NOT a JavaScript primitive type?",
+        "type": "MULTIPLE_CHOICE",
+        "points": 5,
+        "choices": [
+          "number",
+          "string",
+          "boolean",
+          "object"
+        ],
+        "correctChoice": 3
+      },
+      {
+        "title": "The expression `3 === '3'` evaluates to true.",
+        "type": "TRUE_FALSE",
+        "points": 5,
+        "choices": [
+          "True",
+          "False"
+        ],
+        "correctChoice": 1
+      },
+      {
+        "title": "What is the result of `typeof null` in JavaScript?",
+        "type": "MULTIPLE_CHOICE",
+        "points": 5,
+        "choices": [
+          "\"null\"",
+          "\"object\"",
+          "\"undefined\"",
+          "\"number\""
+        ],
+        "correctChoice": 1
+      },
+      {
+        "title": "The global object in browsers that represents the window / tab is called ______.",
+        "type": "FILL_IN_BLANK",
+        "points": 5,
+        "correctAnswers": [
+          "window",
+          "window object"
+        ]
+      }
+    ]
+  },
+  {
+    "course": "CS5610",
+    "title": "React & SPA Concepts Quiz",
+    "description": "Single-page applications, components, props, and state in React.",
+    "points": 30,
+    "published": true,
+    "multipleAttempts": false,
+    "maxAttempts": 1,
+    "questions": [
+      {
+        "title": "React components must always return a single root element.",
+        "type": "TRUE_FALSE",
+        "points": 5,
+        "choices": [
+          "False",
+          "True"
+        ],
+        "correctChoice": 1
+      },
+      {
+        "title": "Which hook is used to manage state in a functional component?",
+        "type": "MULTIPLE_CHOICE",
+        "points": 5,
+        "choices": [
+          "useEffect",
+          "useState",
+          "useContext",
+          "useRef"
+        ],
+        "correctChoice": 1
+      },
+      {
+        "title": "Props in React are ______.",
+        "type": "FILL_IN_BLANK",
+        "points": 5,
+        "correctAnswers": [
+          "read only",
+          "readonly",
+          "read-only"
+        ]
+      },
+      {
+        "title": "Which statement about Single-Page Applications (SPAs) is true?",
+        "type": "MULTIPLE_CHOICE",
+        "points": 5,
+        "choices": [
+          "They always reload the entire HTML document for each navigation.",
+          "They render all pages on the server side only.",
+          "They dynamically update the current page without full reloads.",
+          "They cannot call backend APIs."
+        ],
+        "correctChoice": 2
+      },
+      {
+        "title": "The hook `useEffect` is typically used for side effects such as data fetching.",
+        "type": "TRUE_FALSE",
+        "points": 5,
+        "choices": [
+          "False",
+          "True"
+        ],
+        "correctChoice": 1
+      },
+      {
+        "title": "In React, the piece of data that triggers re-renders when changed is called ______.",
+        "type": "FILL_IN_BLANK",
+        "points": 5,
+        "correctAnswers": [
+          "state",
+          "component state"
+        ]
+      }
+    ]
+  }
+]

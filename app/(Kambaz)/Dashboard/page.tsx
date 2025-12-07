@@ -3,6 +3,8 @@ import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
 import * as client from "../Courses/client";
+import { useRouter } from "next/navigation";
+
 import {
   Card,
   CardBody,
@@ -20,14 +22,21 @@ import {
   addEnrollment,
   removeEnrollment,
 } from "../Courses/Enrollments/reducer";
+import { FaClipboardList, FaQuestionCircle } from "react-icons/fa";
 
 export default function Dashboard() {
   const dispatch = useDispatch();
   const { courses = [] } = useSelector((state: any) => state.coursesReducer);
   const { currentUser } = useSelector((state: any) => state.accountReducer);
+  const router = useRouter();
   const { enrollments = [] } = useSelector(
     (s: any) => s.enrollmentsReducer || {}
   );
+
+  // Role helpers
+  const role = currentUser?.role;
+  const isStudent = role === "STUDENT";
+  const isInstructor = role === "FACULTY" || role === "ADMIN";
 
   const [allCourses, setAllCourses] = useState<any[]>([]);
   const [showAll, setShowAll] = useState(false);
@@ -39,7 +48,6 @@ export default function Dashboard() {
     image: "/images/reactjs.jpg",
     description: "New Description",
   });
-
 
   const loadAllCourses = async () => {
     const list = await client.findAllCourses();
@@ -82,7 +90,7 @@ export default function Dashboard() {
     const { _id, ...courseData } = course;
     const newCourse = await client.createCourse(courseData);
     setAllCourses((prev) => [...prev, newCourse]);
-};
+  };
 
   const onDeleteCourse = async (courseId: string) => {
     await client.deleteCourse(courseId);
@@ -101,6 +109,7 @@ export default function Dashboard() {
   };
 
   const onEnroll = async (courseId: string) => {
+    if (!currentUser) return;
     const row = await client.enrollIntoCourse(currentUser._id, courseId);
     if (row && row._id) {
       dispatch(addEnrollment(row));
@@ -109,8 +118,8 @@ export default function Dashboard() {
   };
 
   const onUnenroll = async (courseId: string) => {
-    await client.unenrollFromCourse(currentUser._id, courseId);
     if (!currentUser) return;
+    await client.unenrollFromCourse(currentUser._id, courseId);
     dispatch(removeEnrollment({ user: currentUser._id, course: courseId }));
     await loadMyCourses();
   };
@@ -127,7 +136,6 @@ export default function Dashboard() {
   if (!currentUser)
     return <div id="wd-dashboard">Please sign in to view your courses.</div>;
 
-
   return (
     <div id="wd-dashboard" className="p-4">
       <div className="d-flex justify-content-between align-items-center">
@@ -143,41 +151,45 @@ export default function Dashboard() {
       </div>
       <hr />
 
-      <h5 className="mb-3">
-        New Course
-        <button
-          className="btn btn-warning float-end ms-2"
-          id="wd-update-course-click"
-          onClick={onUpdateCourse}
-        >
-          Update
-        </button>
-        <button
-          className="btn btn-primary float-end"
-          id="wd-add-new-course-click"
-          onClick={onAddNewCourse}
-        >
-          Add
-        </button>
-      </h5>
+      {isInstructor && (
+        <>
+          <h5 className="mb-3">
+            New Course
+            <button
+              className="btn btn-warning float-end ms-2"
+              id="wd-update-course-click"
+              onClick={onUpdateCourse}
+            >
+              Update
+            </button>
+            <button
+              className="btn btn-primary float-end"
+              id="wd-add-new-course-click"
+              onClick={onAddNewCourse}
+            >
+              Add
+            </button>
+          </h5>
 
-      <FormControl
-        className="mb-2"
-        value={course.name}
-        placeholder="Course title"
-        onChange={(e) => setCourse({ ...course, name: e.target.value })}
-      />
-      <FormControl
-        as="textarea"
-        rows={3}
-        className="mb-3"
-        value={course.description}
-        placeholder="Course description"
-        onChange={(e) =>
-          setCourse({ ...course, description: e.target.value })
-        }
-      />
-      <hr />
+          <FormControl
+            className="mb-2"
+            value={course.name}
+            placeholder="Course title"
+            onChange={(e) => setCourse({ ...course, name: e.target.value })}
+          />
+          <FormControl
+            as="textarea"
+            rows={3}
+            className="mb-3"
+            value={course.description}
+            placeholder="Course description"
+            onChange={(e) =>
+              setCourse({ ...course, description: e.target.value })
+            }
+          />
+          <hr />
+        </>
+      )}
 
       <h2 id="wd-dashboard-published">
         {showAll
@@ -217,50 +229,81 @@ export default function Dashboard() {
 
                   <div className="d-flex justify-content-between align-items-center">
                     <Button variant="primary">Go</Button>
-                    <div className="d-flex gap-2">
-                      <Button
-                        className="btn btn-warning"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          setCourse(c);
-                        }}
-                      >
-                        Edit
-                      </Button>
-                      <Button
-                        className="btn btn-danger"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          onDeleteCourse(c._id);
-                        }}
-                      >
-                        Delete
-                      </Button>
-                    </div>
+
+                    {isInstructor && (
+                      <div className="d-flex gap-2">
+                        <Button
+                          className="btn btn-warning"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setCourse(c);
+                          }}
+                        >
+                          Edit
+                        </Button>
+                        <Button
+                          className="btn btn-danger"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            onDeleteCourse(c._id);
+                          }}
+                        >
+                          Delete
+                        </Button>
+                      </div>
+                    )}
                   </div>
 
-                  <div className="d-flex justify-content-end mt-2">
-                    {isEnrolled(c._id) ? (
-                      <Button
-                        variant="danger"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          onUnenroll(c._id);
-                        }}
-                      >
-                        Unenroll
-                      </Button>
-                    ) : (
-                      <Button
-                        variant="success"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          onEnroll(c._id);
-                        }}
-                      >
-                        Enroll
-                      </Button>
-                    )}
+                  {isInstructor && (
+                    <div className="d-flex justify-content-end mt-2">
+                      {isEnrolled(c._id) ? (
+                        <Button
+                          variant="danger"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            onUnenroll(c._id);
+                          }}
+                        >
+                          Unenroll
+                        </Button>
+                      ) : (
+                        <Button
+                          variant="success"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            onEnroll(c._id);
+                          }}
+                        >
+                          Enroll
+                        </Button>
+                      )}
+                    </div>
+                  )}
+
+                  <div className="d-flex gap-3 mt-3 pt-2 border-top">
+                    <button
+                      className="btn btn-link p-0 text-muted small d-flex align-items-center gap-1"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        router.push(`/Courses/${c._id}/Assignments`);
+                      }}
+                    >
+                      <FaClipboardList />
+                      <span>Assignments</span>
+                    </button>
+
+                    <button
+                      className="btn btn-link p-0 text-muted small d-flex align-items-center gap-1"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        router.push(`/Courses/${c._id}/Quizzes`);
+                      }}
+                    >
+                      <FaQuestionCircle />
+                      <span>Quizzes</span>
+                    </button>
                   </div>
                 </CardBody>
               </Link>
@@ -271,4 +314,3 @@ export default function Dashboard() {
     </div>
   );
 }
-
