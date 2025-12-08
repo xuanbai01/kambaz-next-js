@@ -74,7 +74,7 @@ export default function QuizzesPage() {
   const [loadingScores, setLoadingScores] = useState(false);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [openMenuQuizId, setOpenMenuQuizId] = useState<string | null>(null);
-  const [sortKey, setSortKey] = useState<SortKey>("NONE");
+  const [sortKey, setSortKey] = useState<SortKey>("AVAILABLE");
 
   const isStudent = currentUser?.role === "STUDENT";
   const isFacultyLike = !!currentUser && currentUser.role !== "STUDENT";
@@ -267,20 +267,6 @@ export default function QuizzesPage() {
     action();
   };
 
-  const getAvailabilityLabel = (quiz: any) => {
-    const now = new Date();
-    const available = quiz.availableDate ? new Date(quiz.availableDate) : null;
-    const until = quiz.untilDate ? new Date(quiz.untilDate) : null;
-
-    if (available && now < available) {
-      return `Not available until ${available.toLocaleString()}`;
-    }
-    if (until && now > until) {
-      return "Closed";
-    }
-    return "Available";
-  };
-
   const sortedQuizzes: QuizWithLastAttempt[] = (() => {
     if (sortKey === "NONE") return quizzes;
 
@@ -375,6 +361,13 @@ export default function QuizzesPage() {
           </div>
 
           <ListGroup className="rounded-0">
+            {sortedQuizzes.length === 0 && (
+              <ListGroupItem className="border-0 text-muted">
+                No quizzes yet. Click <strong>+ Quiz</strong> to create your
+                first quiz.
+              </ListGroupItem>
+            )}
+
             {sortedQuizzes.map((q) => {
               const id = q._id as string;
               const lastAttempt = q.lastAttempt ?? attemptsByQuizId[id];
@@ -430,7 +423,7 @@ export default function QuizzesPage() {
                   </div>
 
                   {isFacultyLike && (
-                    <div className="ms-2 d-flex flex-column align-items-center">
+                    <div className="ms-2 d-flex flex-column align-items-center position-relative">
                       <button
                         type="button"
                         className="btn btn-link p-0 mb-1"
@@ -458,8 +451,13 @@ export default function QuizzesPage() {
 
                       {openMenuQuizId === id && (
                         <div
-                          className="border rounded bg-white shadow-sm mt-1 p-2 d-flex flex-column gap-1"
-                          style={{ minWidth: "160px", zIndex: 10 }}
+                          className="position-absolute border rounded bg-white shadow-sm p-2 d-flex flex-column gap-1"
+                          style={{
+                            top: "3.5rem",
+                            right: 0,
+                            minWidth: "160px",
+                            zIndex: 20,
+                          }}
                         >
                           <Button
                             variant="outline-primary"
