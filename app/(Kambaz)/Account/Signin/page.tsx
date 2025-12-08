@@ -13,7 +13,7 @@ export default function Signin() {
   const dispatch = useDispatch();
 
   const signin = async () => {
-    const user =  await client.signin(credentials);
+    const user = await client.signin(credentials);
     if (!user) return;
     dispatch(setCurrentUser(user));
     redirect("/Dashboard");
@@ -41,13 +41,45 @@ export default function Signin() {
         type="password"
         id="wd-password"
       />
-      <Button onClick={signin} id="wd-signin-btn" className="w-100">
+      <Button onClick={signin} id="wd-signin-btn" className="w-100 mb-2">
         Sign in
       </Button>
 
-      <Link id="wd-signup-link" href="/Account/Signup">
-        Sign up
-      </Link>
+      <div className="mb-4">
+        <Link id="wd-signup-link" href="/Account/Signup">
+          Sign up
+        </Link>
+      </div>
+
+      <div className="mt-4 p-3 border rounded bg-light">
+        <h2 className="h5 mb-2">Project Information</h2>
+        <p className="mb-1">
+          <strong>Student:</strong> Xuan Bai
+        </p>
+        <p className="mb-3">
+          <strong>Section:</strong> 05
+        </p>
+        <p className="mb-1">
+          <strong>Frontend repository:</strong>{" "}
+          <a
+            href="https://github.com/xuanbai01/kambaz-next-js/tree/quizzes"
+            target="_blank"
+            rel="noreferrer"
+          >
+            github.com/xuanbai01/kambaz-next-js/tree/quizzes
+          </a>
+        </p>
+        <p className="mb-0">
+          <strong>Backend repository:</strong>{" "}
+          <a
+            href="https://github.com/xuanbai01/kambaz-node-server-app/tree/quizzes"
+            target="_blank"
+            rel="noreferrer"
+          >
+            github.com/xuanbai01/kambaz-node-server-app/tree/quizzes
+          </a>
+        </p>
+      </div>
     </div>
   );
 }
