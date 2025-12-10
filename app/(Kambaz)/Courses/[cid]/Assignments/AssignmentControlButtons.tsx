@@ -1,18 +1,26 @@
 "use client";
 import { FaTrash } from "react-icons/fa";
 import { useDispatch } from "react-redux";
-import { deleteAssignment } from "./reducer";
+import { deleteAssignment as deleteAssignmentAction } from "./reducer";
+
+type Props = {
+  assignmentId?: string;
+  onDelete?: (assignmentId: string) => void | Promise<void>;
+};
 
 export default function AssignmentControlButtons({
   assignmentId,
-}: { assignmentId?: string }) {
+  onDelete,
+}: Props) {
   const dispatch = useDispatch();
 
-  const handleDelete = () => {
-    if (!assignmentId) return; 
-    const ok = window.confirm("Delete this assignment?");
-    if (!ok) return;
-    dispatch(deleteAssignment(assignmentId));
+  const handleDelete = async () => {
+    if (!assignmentId) return;
+    if (onDelete) {
+      await onDelete(assignmentId);
+    } else {
+      dispatch(deleteAssignmentAction(assignmentId));
+    }
   };
 
   return (

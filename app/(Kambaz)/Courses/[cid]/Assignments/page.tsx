@@ -8,8 +8,11 @@ import AssignmentControlButtons from "./AssignmentControlButtons";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useSelector, useDispatch } from "react-redux";
-import { setAssignments, deleteAssignment as deleteAssignmentAction } from "./reducer";
-import * as client from "../../client"; 
+import {
+  setAssignments,
+  deleteAssignment as deleteAssignmentAction,
+} from "./reducer";
+import * as client from "../../client";
 
 export default function Assignments() {
   const { cid } = useParams();
@@ -71,11 +74,16 @@ export default function Assignments() {
                     </Link>
                     <div className="text-muted small">
                       <span className="text-danger">Multiple Modules</span> |{" "}
-                      {a.availableFrom && `Not available until ${a.availableFrom} |`}
+                      {a.availableFrom &&
+                        `Not available until ${a.availableFrom} |`}
                       <br />
                       Due {a.due} | {a.points} pts
                     </div>
                   </div>
+                  <AssignmentControlButtons
+                    assignmentId={a._id}
+                    onDelete={onDelete}
+                  />
                 </ListGroupItem>
               ))}
           </ListGroup>
