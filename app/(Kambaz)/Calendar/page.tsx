@@ -8,7 +8,7 @@ type CalendarItem = {
   title: string;
   course: string;
   type: "QUIZ" | "ASSIGNMENT" | "CLASS";
-  dateTime: string; // display string
+  dateTime: string;
 };
 
 const ITEMS: CalendarItem[] = [

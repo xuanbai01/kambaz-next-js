@@ -90,6 +90,8 @@ const fromLocalInputValue = (value: string): string | null => {
   return d.toISOString();
 };
 
+ const MaxChoice = 3;
+
 export default function QuizEditor() {
   const { cid, qid } = useParams();
   const router = useRouter();
@@ -180,11 +182,15 @@ export default function QuizEditor() {
     setQuiz({ ...quiz, questions });
   };
 
+  
   const addChoice = (qIndex: number) => {
     if (!quiz) return;
     const questions = [...quiz.questions];
     const q = { ...questions[qIndex] };
     const choices = [...(q.choices || [])];
+    if (choices.length >= MaxChoice) {
+      return;
+    }
     choices.push("");
     q.choices = choices;
     if (typeof q.correctChoice !== "number") {
@@ -850,6 +856,7 @@ export default function QuizEditor() {
                               size="sm"
                               className="mt-1 p-0"
                               onClick={() => addChoice(idx)}
+                              disabled= {(q.choices || []).length >= MaxChoice}
                             >
                               + Add Another Answer
                             </Button>
